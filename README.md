@@ -65,6 +65,10 @@ python3 predict.py                      # LED / load-line / DAC numbers
 
 <div dir="rtl">
 
+## יום ההדגמה
+
+ה־Pi יוצר רשת Wi-Fi משלו (`TiltLab`, כתובת `http://10.42.0.1:8000`), או מתחבר ל־Mac בכבל USB-C, כך שההדגמה לא תלויה ברשת של האוניברסיטה. הגדרה חד־פעמית: `sudo bash pi/setup_pi.sh`. כל הפרטים ב־[docs/DEMO_DAY.md](docs/DEMO_DAY.md).
+
 ## קבצים
 
 | קובץ | תפקיד |
@@ -76,6 +80,7 @@ python3 predict.py                      # LED / load-line / DAC numbers
 | `predict.py` | חישובי המעגל שבמדריך (numpy) |
 | `analyze.py` | גרף מדידה מול תאוריה (numpy, matplotlib) |
 | `dac_test.py` | בדיקת ה־DAC האופציונלי |
+| `pi/` | הגדרת הרשת וההפעלה האוטומטית ל־Pi (`setup_pi.sh`, `tiltlab-net.sh`, `tiltlab.service`) |
 | `docs/` | האיורים והשרטוטים, ומקורות ה־JSX שלהם (`docs/figures-src`, נבנים עם `render.mjs`) |
 
 המדריך המלא בעברית, עם הנגזרות, הטבלאות ותסריט ההדגמה, נמצא במסמך הנלווה לפרויקט.

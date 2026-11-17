@@ -21,6 +21,7 @@ Wiring (BCM numbers, see the build guide):
 import argparse
 import math
 import socket
+import subprocess
 import sys
 import time
 
@@ -78,18 +79,28 @@ def make_filter(p, dt, y0=None, history=None):
     return f
 
 
+KNOWN_LINKS = {'10.42.0.1': 'TiltLab Wi-Fi', '10.55.0.1': 'USB cable'}   # set up by pi/setup_pi.sh
+
+
 def lan_addresses():
-    names = [socket.gethostname()]
-    if not names[0].endswith('.local'):
-        names.append(names[0] + '.local')
+    """Addresses a browser can use to reach this machine, as (address, note) pairs."""
+    host = socket.gethostname()
+    names = [host if host.endswith('.local') else host + '.local']
+    try:                                       # every IPv4 address (Linux / the Pi)
+        out = subprocess.run(['hostname', '-I'], capture_output=True, text=True, timeout=2).stdout
+        names += [ip for ip in out.split() if ':' not in ip]
+    except (OSError, subprocess.SubprocessError):
+        pass
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('10.255.255.255', 1))       # no packet is sent; just picks the LAN interface
-        names.append(s.getsockname()[0])
+        ip = s.getsockname()[0]
         s.close()
+        if ip not in names:
+            names.append(ip)
     except OSError:
         pass
-    return names
+    return [(n, KNOWN_LINKS.get(n, '')) for n in names]
 
 
 def bubble_levels(theta, rng, n):
@@ -169,8 +180,8 @@ def main():
             shared.sim = sensor
         dashboard_server.start(shared, a.dashboard)
         print('Dashboard running. Open one of these in a browser on the same network:')
-        for n in lan_addresses():
-            print('   http://%s:%d' % (n, a.dashboard))
+        for n, note in lan_addresses():
+            print('   http://%s:%d%s' % (n, a.dashboard, '   (%s)' % note if note else ''))
         if a.sim:
             print('   http://localhost:%d   (this computer)' % a.dashboard)
         a.quiet = True
