@@ -19,6 +19,7 @@ case "$cmd" in
             case "$ip" in
                 10.42.0.1) echo "  http://$ip:8000   (TiltLab Wi-Fi)" ;;
                 10.55.0.1) echo "  http://$ip:8000   (USB cable)" ;;
+                10.56.0.1) echo "  http://$ip:8000   (Ethernet cable to the Mac)" ;;
                 *:*) ;;
                 *) echo "  http://$ip:8000" ;;
             esac

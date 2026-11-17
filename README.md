@@ -67,7 +67,7 @@ python3 predict.py                      # LED / load-line / DAC numbers
 
 ## יום ההדגמה
 
-ה־Pi יוצר רשת Wi-Fi משלו (`TiltLab`, כתובת `http://10.42.0.1:8000`), או מתחבר ל־Mac בכבל USB-C, כך שההדגמה לא תלויה ברשת של האוניברסיטה. הגדרה חד־פעמית: `sudo bash pi/setup_pi.sh`. כל הפרטים ב־[docs/DEMO_DAY.md](docs/DEMO_DAY.md).
+ה־Pi יוצר רשת Wi-Fi משלו (`TiltLab`, כתובת `http://10.42.0.1:8000`), או מתחבר ל־Mac בכבל רשת ישיר (`http://10.56.0.1:8000`), כך שההדגמה לא תלויה ברשת של האוניברסיטה. הגדרה חד־פעמית: `sudo bash pi/setup_pi.sh`. כל הפרטים ב־[docs/DEMO_DAY.md](docs/DEMO_DAY.md).
 
 ## קבצים
 

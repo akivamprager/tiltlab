@@ -79,7 +79,7 @@ def make_filter(p, dt, y0=None, history=None):
     return f
 
 
-KNOWN_LINKS = {'10.42.0.1': 'TiltLab Wi-Fi', '10.55.0.1': 'USB cable'}   # set up by pi/setup_pi.sh
+KNOWN_LINKS = {'10.42.0.1': 'TiltLab Wi-Fi', '10.55.0.1': 'USB cable', '10.56.0.1': 'Ethernet cable'}   # set up by pi/setup_pi.sh
 
 
 def lan_addresses():

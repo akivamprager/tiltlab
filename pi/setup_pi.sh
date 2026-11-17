@@ -8,8 +8,11 @@
 # What it sets up (Raspberry Pi OS Bookworm or newer, which uses NetworkManager):
 #   1. Wi-Fi access point "TiltLab" that starts at every boot. The Mac joins it and opens
 #      http://10.42.0.1:8000. Works the same on campus, at home or with no network around.
-#   2. USB-cable network (Pi 4 / Pi 5 / Zero / Zero 2 W only): one USB-C cable from the Mac
-#      powers the Pi and gives http://10.55.0.1:8000, and the Mac keeps its own internet.
+#   2. Cable backup, and the Mac keeps its own internet:
+#      - Ethernet (Pi 3B and any Pi with a port): cable to the Mac's USB-C Ethernet adapter
+#        gives http://10.56.0.1:8000. Plugged into a router instead, eth0 uses DHCP as usual.
+#      - USB (Pi 4 / Pi 5 / Zero / Zero 2 W only): one USB-C cable from the Mac powers the Pi
+#        and gives http://10.55.0.1:8000.
 #   3. A systemd service that starts "tiltlab.py --zero --dashboard" at boot.
 #   4. Hostname "tiltlab", so http://tiltlab.local:8000 also works.
 #
@@ -25,6 +28,7 @@ DO_USB=1
 DO_SERVICE=1
 AP_IP="10.42.0.1"
 USB_IP="10.55.0.1"
+ETH_IP="10.56.0.1"
 COUNTRY_DEFAULT="IL"
 
 while [[ $# -gt 0 ]]; do
@@ -34,7 +38,7 @@ while [[ $# -gt 0 ]]; do
         --hostname) HOSTNAME_NEW="$2"; shift 2 ;;
         --no-usb) DO_USB=0; shift ;;
         --no-service) DO_SERVICE=0; shift ;;
-        -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
         *) echo "Unknown option: $1 (try --help)"; exit 1 ;;
     esac
 done
@@ -116,7 +120,32 @@ elif [[ "$MODEL" =~ Raspberry\ Pi\ (4|5|Zero) ]]; then
         echo "      about power, use the Wi-Fi access point instead."
     fi
 else
-    echo "Not available on this model (needs Pi 4, Pi 5 or a Zero); use the Wi-Fi access point."
+    echo "Not available on this model (needs Pi 4, Pi 5 or a Zero); the Ethernet cable below is the backup."
+fi
+
+# ---------------------------------------------------------------- 2b. direct Ethernet cable
+# Plugged into a router, eth0 gets an address by DHCP as usual. Plugged straight into the Mac
+# (USB-C Ethernet adapter), DHCP gets no answer within 15 s, so NetworkManager falls back to the
+# second profile: the Pi becomes 10.56.0.1 and hands the Mac an address itself.
+step "2b. Direct Ethernet cable -> http://$ETH_IP:8000"
+if ip link show eth0 >/dev/null 2>&1; then
+    # stop older wired profiles from competing at boot (a profile in use stays up until then)
+    while IFS=: read -r name type; do
+        if [[ "$type" == "802-3-ethernet" && "$name" != TiltLab-* ]]; then
+            nmcli connection modify "$name" connection.autoconnect no && echo "Autoconnect off: $name"
+        fi
+    done < <(nmcli -t -f NAME,TYPE connection show)
+    nmcli connection delete TiltLab-ETH-DHCP >/dev/null 2>&1 || true
+    nmcli connection delete TiltLab-ETH-Direct >/dev/null 2>&1 || true
+    nmcli connection add type ethernet ifname eth0 con-name TiltLab-ETH-DHCP \
+        connection.autoconnect yes connection.autoconnect-priority 10 \
+        ipv4.method auto ipv4.dhcp-timeout 15 ipv4.may-fail no ipv6.method disabled >/dev/null
+    nmcli connection add type ethernet ifname eth0 con-name TiltLab-ETH-Direct \
+        connection.autoconnect yes connection.autoconnect-priority 0 \
+        ipv4.method shared ipv4.addresses "$ETH_IP/24" ipv6.method disabled >/dev/null
+    echo "Enabled. Cable to a router: normal DHCP. Cable to the Mac: $ETH_IP after ~20 s."
+else
+    echo "No eth0 on this model; skipped."
 fi
 
 # ---------------------------------------------------------------- 3. autostart service
@@ -152,8 +181,10 @@ cat <<EOF
  On the Mac (about 30 s after the Pi powers up):
    Wi-Fi:  join "$SSID", password:  $PASSWORD
            then open  http://$AP_IP:8000
-   Cable:  USB-C from the Mac to the Pi's power port (Pi 4/5/Zero)
-           then open  http://$USB_IP:8000
+   Ethernet cable to the Mac (USB-C Ethernet adapter), wait ~20 s:
+           http://$ETH_IP:8000
+   USB-C cable to the Pi's power port (Pi 4/5/Zero only):
+           http://$USB_IP:8000
    Either: http://$HOSTNAME_NEW.local:8000
 
  Write the password down. To see it again on the Pi:
