@@ -243,7 +243,7 @@ function niceStep(span, n) {
 }
 function fmt(v, step) { const d = Math.max(0, -Math.floor(Math.log10(step) + 1e-9)); return v.toFixed(Math.min(d, 3)); }
 function setupCanvas(c) {
-  const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = +c.getAttribute('height');
+  const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = +(c.dataset.h ||= c.getAttribute('height'));  // CSS height, read once: setting c.height below rewrites the attribute
   if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.height = h + 'px'; }
   const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [g, w, h];
 }
