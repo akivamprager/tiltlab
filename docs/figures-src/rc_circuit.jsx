@@ -16,7 +16,7 @@ export default () => {
       <path d='M72 140H108' strokeWidth='2'/><path d='M81 150H99' strokeWidth='3'/>
       <text data-claude-text-id='bat-plus' x='64' y='136' textAnchor='middle' fontSize='14' fill={ink} stroke='none'>+</text>
       <text x='116' y='142' fill={ink} stroke='none'>{sub('vb', 'V', 'B')}</text>
-      <text data-claude-text-id='bat-val' x='116' y='162' fill={ink} stroke='none'>6 V (4×AA)</text></g>
+      <text data-claude-text-id='bat-val' x='116' y='162' fill={ink} stroke='none'>9 V</text></g>
     <g data-claude-anchor='switch'><circle cx='150' cy='90' r='3.5' fill={ink}/><circle cx='200' cy='90' r='3.5' fill={ink}/>
       <path d='M144 78H206M175 78V62M165 62H185' fill='none' stroke={edge} strokeWidth='1.6'/>
       <text data-claude-text-id='sw-label' x='212' y='70' fill={ink}>S</text>

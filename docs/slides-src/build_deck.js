@@ -13,8 +13,8 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(ROOT, 'docs', 'presentation.pptx');
 
 // ---- circuit numbers (calc.py defaults) ---------------------------------------------
-const VB = 6.0, R1 = 47, R2 = 1000, Vf = 1.8, I_OFF = 0.5e-3;
-const i0 = (VB - Vf) / (R1 + R2);                 // 4.01 mA
+const VB = 9.0, R1 = 47, R2 = 1000, Vf = 1.8, I_OFF = 0.5e-3;
+const i0 = (VB - Vf) / (R1 + R2);                 // 6.88 mA
 const tauOf = C => R2 * C;
 const tOff = C => tauOf(C) * Math.log(i0 / I_OFF);
 const fmt = (x, d = 1) => x.toFixed(d);
@@ -107,7 +107,7 @@ async function main() {
   const ratio = meta.width / (meta.height - top);
   const imgW = 8.4;
   s.addImage({ data: 'image/png;base64,' + png.toString('base64'), x: 0.8, y: 1.1, w: imgW, h: imgW / ratio,
-    altText: 'שרטוט המעגל: סוללה 6 וולט, לחצן, R1 = 47 אוהם, קבל 1000 מיקרופרד, R2 = 1 קילו־אוהם ונורה אדומה', objectName: 'schematic' });
+    altText: 'שרטוט המעגל: סוללה 9 וולט, לחצן, R1 = 47 אוהם, קבל 1000 מיקרופרד, R2 = 1 קילו־אוהם ונורה אדומה', objectName: 'schematic' });
   const cards = [
     [{ text: 'לוחצים: ', options: { bold: true } }, { text: 'הקבל נטען, והנורה דולקת בעוצמה קבועה' }],
     [{ text: 'עוזבים: ', options: { bold: true } }, { text: 'הקבל מתפרק דרך R2 והנורה, והיא דועכת' }],
@@ -161,7 +161,7 @@ async function main() {
     'הפתרון שואף ל־Vf ולא לאפס:',
     ['v', { sub: 'C' }, '(t) − V', { sub: 'f' }, ' = (v', { sub: '0' }, ' − V', { sub: 'f' }, ')·e', { sup: '−t/τ' }],
   ], ['τ = R', { sub: '2' }, 'C = ' + fmt(tauOf(1000e-6), 0) + ' s'], 'discharge');
-  s.addNotes('0:50–1:30, לחצן לחוץ: "הסוללה עם R1 היא מקור מתח מעשי. במצב יציב אין זרם לקבל, אז לפי KVL יש 4 מיליאמפר בנורה, והקבל טעון ל־5.8 וולט. הקבל רואה שקול תבנין עם R1 מקביל ל־R2, בערך 45 אוהם, אז הוא נטען בפחות מרבע שנייה."\n\n1:30–2:20, לחצן משוחרר: "הקבל מתפרק דרך R2 והנורה. KCL בצומת נותן משוואה מסדר ראשון, והפתרון הוא אקספוננט עם טאו שווה R2 כפול C, שנייה אחת. המתח לא שואף לאפס אלא ל־1.8 וולט."');
+  s.addNotes('0:50–1:30, לחצן לחוץ: "הסוללה עם R1 היא מקור מתח מעשי. במצב יציב אין זרם לקבל, אז לפי KVL יש 7 מיליאמפר בנורה, והקבל טעון ל־8.7 וולט. הקבל רואה שקול תבנין עם R1 מקביל ל־R2, בערך 45 אוהם, אז הוא נטען בפחות מרבע שנייה."\n\n1:30–2:20, לחצן משוחרר: "הקבל מתפרק דרך R2 והנורה. KCL בצומת נותן משוואה מסדר ראשון, והפתרון הוא אקספוננט עם טאו שווה R2 כפול C, שנייה אחת. המתח לא שואף לאפס אלא ל־1.8 וולט."');
 
   // ---- slide 4: prediction vs measurement ----
   pres.addSection({ title: 'הדגמה' });
@@ -180,7 +180,7 @@ async function main() {
     showLegend: true, legendPos: 'b', legendFontSize: 11, legendFontFace: '+mn-lt', legendColor: HEX.dk2,
     catAxisTitle: 't [s]', showCatAxisTitle: true, catAxisTitleFontSize: 11, catAxisTitleColor: HEX.dk2,
     catAxisLabelColor: HEX.dk2, catAxisLabelFontSize: 11, catAxisLabelFontFace: '+mn-lt',
-    valAxisLabelColor: HEX.dk2, valAxisLabelFontSize: 11, valAxisLabelFontFace: '+mn-lt', valAxisMinVal: 0, valAxisMaxVal: 4.5,
+    valAxisLabelColor: HEX.dk2, valAxisLabelFontSize: 11, valAxisLabelFontFace: '+mn-lt', valAxisMinVal: 0, valAxisMaxVal: Math.ceil(i0 * 1e3),
     valAxisLabelFormatCode: '0', valGridLine: { color: 'DEE2E6', size: 0.75 }, catGridLine: { style: 'none' },
   });
   const head = { bold: true, color: HEX.lt1, fill: { color: HEX.dk1 }, align: 'center', fontSize: 14 };
@@ -194,7 +194,7 @@ async function main() {
   ], { x: 5.6, y: 1.2, w: 3.9, colW: [0.95, 0.95, 0.8, 1.2], rowH: 0.48, border: { type: 'solid', pt: 0.75, color: 'DEE2E6' },
     fontFace: 'Arial', valign: 'middle', objectName: 'prediction table' });
   const notes = [
-    [{ text: 't', options: {} }, { text: 'off', options: { subscript: true } }, { text: ' = τ·ln(i₀ / 0.5 mA) = τ·ln 8', options: {} }],
+    [{ text: 't', options: {} }, { text: 'off', options: { subscript: true } }, { text: ' = τ·ln(i₀ / 0.5 mA) = τ·ln ' + Math.round(i0 / I_OFF), options: {} }],
     [{ text: 'היחס בין הקבלים: פי 2.2, ', options: { bold: true } }, { text: 'בלי קשר להגדרה של "כבויה"' }],
     [{ text: 'מגבלת המודל: ', options: { bold: true } }, { text: 'בזרם נמוך המתח על הנורה יורד, והדעיכה ארוכה מעט יותר' }],
   ];
@@ -205,7 +205,7 @@ async function main() {
       color: C.text1, valign: 'middle', margin: 0, ...(k === 0 ? { align: 'right', fontFace: 'Cambria' } : RTL),
       objectName: 'note ' + (k + 1) });
   });
-  s.addNotes('2:20–2:40: "הנורה נראית כבויה בערך בחצי מיליאמפר. טאו כפול לן 8 נותן 2.1 שניות."\n\n2:40–3:05, הדגמה 1: לוחצים, עוזבים, ומפעילים את הסטופר ברגע העזיבה. "יצא ___ שניות."\n\n3:05–3:35, הדגמה 2: מחליפים לקבל של 2200 מיקרופרד, לוחצים, עוזבים, מודדים. "החיזוי היה פי 2.2, יצא ___."\n\n3:35–3:45, סיכום: "מעגל מסדר ראשון: טאו שווה RC קובע את הזמן, והוא מתאים למדידה. הסטייה הקטנה היא כי המתח על הנורה יורד קצת בזרם נמוך."');
+  s.addNotes('2:20–2:40: "הנורה נראית כבויה בערך בחצי מיליאמפר. טאו כפול לן 14 נותן 2.6 שניות."\n\n2:40–3:05, הדגמה 1: לוחצים, עוזבים, ומפעילים את הסטופר ברגע העזיבה. "יצא ___ שניות."\n\n3:05–3:35, הדגמה 2: מחליפים לקבל של 2200 מיקרופרד, לוחצים, עוזבים, מודדים. "החיזוי היה פי 2.2, יצא ___."\n\n3:35–3:45, סיכום: "מעגל מסדר ראשון: טאו שווה RC קובע את הזמן, והוא מתאים למדידה. הסטייה הקטנה היא כי המתח על הנורה יורד קצת בזרם נמוך."');
 
   await pres.writeFile({ fileName: OUT });
   const { applyTheme } = require(process.env.APPLY_THEME);

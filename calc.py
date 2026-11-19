@@ -2,10 +2,9 @@
 """
 calc.py - the circuit's numbers, from the same equations as the guide (Python standard library only).
 
-  python3 calc.py                          # the values in the guide: 6 V, 47 ohm, 1 kohm, 1000 uF
-  python3 calc.py --VB 5.9                 # with the battery voltage you measured
+  python3 calc.py                          # the values in the guide: 9 V, 47 ohm, 1 kohm, 1000 uF
+  python3 calc.py --VB 8.6                 # with the battery voltage you measured
   python3 calc.py --C 2200e-6              # with a bigger capacitor
-  python3 calc.py --VB 4.8 --C 2200e-6     # 4 rechargeable AA cells
 
 Model (tirgul 3): the lit LED is a constant voltage V_f. Then
   switch closed: battery + R1 is a practical source charging C (Thevenin, tirgul 2)
@@ -17,7 +16,7 @@ import math
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--VB', type=float, default=6.0, help='battery voltage [V] (default 6 = 4 x AA)')
+    ap.add_argument('--VB', type=float, default=9.0, help='battery voltage [V] (default 9 = one 9 V battery)')
     ap.add_argument('--R1', type=float, default=47.0, help='charging resistor [ohm]')
     ap.add_argument('--R2', type=float, default=1000.0, help='LED resistor [ohm]')
     ap.add_argument('--C', type=float, default=1000e-6, help='capacitor [F] (1000 uF = 1000e-6)')
