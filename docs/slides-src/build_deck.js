@@ -1,4 +1,4 @@
-// build_deck.js - builds docs/TiltLab.pptx, the 4-slide deck for the 4-minute talk (Hebrew, RTL).
+// build_deck.js - builds docs/presentation.pptx, the 4-slide deck for the 4-minute talk (Hebrew, RTL).
 //
 //   NODE_PATH=<dir with pptxgenjs + sharp> APPLY_THEME=<pptx skill>/scripts/apply_theme.js \
 //     node docs/slides-src/build_deck.js
@@ -10,7 +10,7 @@ const pptxgen = require('pptxgenjs');
 const sharp = require('sharp');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const OUT = path.join(ROOT, 'docs', 'TiltLab.pptx');
+const OUT = path.join(ROOT, 'docs', 'presentation.pptx');
 
 // ---- circuit numbers (calc.py defaults) ---------------------------------------------
 const VB = 6.0, R1 = 47, R2 = 1000, Vf = 1.8, I_OFF = 0.5e-3;
@@ -21,7 +21,7 @@ const fmt = (x, d = 1) => x.toFixed(d);
 
 // ---- theme ---------------------------------------------------------------------------
 const THEME = {
-  name: 'Tilt Lab',
+  name: 'RC Fade',
   headFontFace: 'Arial',
   bodyFontFace: 'Arial',
   colors: {
@@ -37,7 +37,7 @@ async function main() {
   pres.layout = 'LAYOUT_16x9';                    // 10 x 5.625 in
   pres.rtlMode = true;
   pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
-  pres.title = 'Tilt Lab: פלס עם זיכרון';
+  pres.title = 'נורה שנכבית לאט';
   const C = pres.SchemeColor;
   const RTL = { rtlMode: true, align: 'right', lang: 'he-IL' };
   // a mixed bold/plain paragraph keeps right-to-left only if every run carries it
@@ -82,8 +82,8 @@ async function main() {
   // ---- slide 1: title ----
   pres.addSection({ title: 'פתיחה' });
   let s = pres.addSlide({ masterName: 'TITLE_DARK', sectionTitle: 'פתיחה' });
-  s.addText('פלס עם זיכרון', { placeholder: 'title' });
-  s.addText('מעגל RC מסדר ראשון: סוללה, מתג, שני נגדים, קבל ונורה', { placeholder: 'body' });
+  s.addText('נורה שנכבית לאט', { placeholder: 'title' });
+  s.addText('דעיכה במעגל RC מסדר ראשון', { placeholder: 'body' });
   led(s, 1.0, 1.45, 1.8, 0, 'LED lit');
   // the fade: brightness ~ i(t)/i0 = e^(-t/tau), tau = 1 s
   [0, 1, 2, 3].forEach((t, k) => {
@@ -92,14 +92,14 @@ async function main() {
     s.addText(t + ' s', { isTextBox: true, x: x - 0.12, y: 4.42, w: 0.6, h: 0.3, fontSize: 11,
       color: C.accent3, align: 'center', margin: 0, objectName: 'fade label ' + t });
   });
-  s.addText('אחרי שמיישרים, הנורה דועכת אקספוננציאלית עם τ = 1 s', { isTextBox: true, x: 3.6, y: 4.0, w: 5.9, h: 0.5,
+  s.addText('אחרי שעוזבים את הלחצן, הנורה דועכת אקספוננציאלית עם τ = 1 s', { isTextBox: true, x: 3.6, y: 4.0, w: 5.9, h: 0.5,
     fontSize: 14, color: C.accent3, valign: 'middle', ...RTL, objectName: 'fade caption' });
-  s.addNotes('0:00–0:20. מטים את הלוח, ואז מיישרים. "כשמטים, הנורה נדלקת. כשמיישרים, היא לא נכבית מיד אלא דועכת. נראה למה, ונחזה כמה זמן זה לוקח."');
+  s.addNotes('0:00–0:20. לוחצים על הלחצן, ואז עוזבים. "כשלוחצים, הנורה נדלקת. כשעוזבים, היא לא נכבית מיד אלא דועכת. נראה למה, ונחזה כמה זמן זה לוקח."');
 
   // ---- slide 2: the circuit ----
   pres.addSection({ title: 'המעגל' });
   s = pres.addSlide({ masterName: 'CONTENT', sectionTitle: 'המעגל' });
-  s.addText('המעגל: רק רכיבים שלמדנו', { placeholder: 'title' });
+  s.addText('המעגל', { placeholder: 'title' });
   const svg = path.join(ROOT, 'docs', 'img', 'rc_circuit.svg');
   const meta = await sharp(svg, { density: 288 }).metadata();
   const top = Math.round(meta.height * 0.15);       // drop the figure's own title line
@@ -107,10 +107,10 @@ async function main() {
   const ratio = meta.width / (meta.height - top);
   const imgW = 8.4;
   s.addImage({ data: 'image/png;base64,' + png.toString('base64'), x: 0.8, y: 1.1, w: imgW, h: imgW / ratio,
-    altText: 'שרטוט המעגל: סוללה 6 וולט, מתג הטיה, R1 = 47 אוהם, קבל 1000 מיקרופרד, R2 = 1 קילו־אוהם ונורה אדומה', objectName: 'schematic' });
+    altText: 'שרטוט המעגל: סוללה 6 וולט, לחצן, R1 = 47 אוהם, קבל 1000 מיקרופרד, R2 = 1 קילו־אוהם ונורה אדומה', objectName: 'schematic' });
   const cards = [
-    [{ text: 'בלי שבבים: ', options: { bold: true } }, { text: 'מקור, מתג, שני נגדים, קבל ונורה' }],
-    [{ text: 'מתג הטיה: ', options: { bold: true } }, { text: 'כדור מתכת שסוגר מגע כשמטים' }],
+    [{ text: 'לוחצים: ', options: { bold: true } }, { text: 'הקבל נטען, והנורה דולקת בעוצמה קבועה' }],
+    [{ text: 'עוזבים: ', options: { bold: true } }, { text: 'הקבל מתפרק דרך R2 והנורה, והיא דועכת' }],
     [{ text: 'הנורה (תרגול 3): ', options: { bold: true } }, { text: 'מקור מתח קבוע, בערך 1.8 V' }],
   ];
   cards.forEach((runs, k) => {
@@ -121,7 +121,7 @@ async function main() {
     s.addText(rtlRuns(runs), { isTextBox: true, x: x + 0.15, y: y + 0.08, w: w - 0.6, h: h - 0.16, fontSize: 14,
       color: C.text1, valign: 'middle', margin: 0, ...RTL, objectName: 'card text ' + (k + 1) });
   });
-  s.addNotes('0:20–0:50. "יש כאן רק מה שלמדנו: סוללה, מתג הטיה שהוא פשוט כדור שסוגר מגע, שני נגדים, קבל ונורה. את הנורה מחליפים במקור מתח קבוע של 1.8 וולט, המודל הליניארי למקוטעין מתרגול 3."');
+  s.addNotes('0:20–0:50. "המעגל: סוללה, לחצן, שני נגדים, קבל ונורה. את הנורה מחליפים במקור מתח קבוע של 1.8 וולט, המודל הליניארי למקוטעין מתרגול 3."');
 
   // ---- slide 3: charge fast, discharge slow ----
   pres.addSection({ title: 'הסבר' });
@@ -148,20 +148,20 @@ async function main() {
     eq(s, callout, { x: x + 0.2, y: y + h - 0.72, w: w - 0.4, h: 0.55, fontSize: 26, bold: true, color: C.accent1,
       objectName: tag + ' tau' });
   };
-  col(5.15, 'מתג סגור: טעינה', true, [
+  col(5.15, 'לחצן לחוץ: טעינה', true, [
     'במצב יציב אין זרם לקבל, אז לפי KVL:',
     ['i = (V', { sub: 'B' }, ' − V', { sub: 'f' }, ') / (R', { sub: '1' }, ' + R', { sub: '2' }, ') ≈ ' + fmt(i0 * 1e3) + ' mA'],
     ['v', { sub: '0' }, ' = V', { sub: 'f' }, ' + i·R', { sub: '2' }, ' ≈ ' + fmt(Vf + i0 * R2) + ' V'],
     'הקבל רואה שקול תבנין (תרגול 2):',
     ['R', { sub: 'th' }, ' = R', { sub: '1' }, ' ∥ R', { sub: '2' }, ' ≈ ' + Math.round(R1 * R2 / (R1 + R2)) + ' Ω'],
   ], ['τ ≈ ' + Math.round(R1 * R2 / (R1 + R2) * 1000e-6 * 1000) + ' ms'], 'charge');
-  col(0.5, 'מתג פתוח: פריקה', false, [
+  col(0.5, 'לחצן משוחרר: פריקה', false, [
     'KCL בצומת של הקבל (תרגול 4):',
     ['C·dv', { sub: 'C' }, '/dt = −(v', { sub: 'C' }, ' − V', { sub: 'f' }, ') / R', { sub: '2' }],
     'הפתרון שואף ל־Vf ולא לאפס:',
     ['v', { sub: 'C' }, '(t) − V', { sub: 'f' }, ' = (v', { sub: '0' }, ' − V', { sub: 'f' }, ')·e', { sup: '−t/τ' }],
   ], ['τ = R', { sub: '2' }, 'C = ' + fmt(tauOf(1000e-6), 0) + ' s'], 'discharge');
-  s.addNotes('0:50–1:30, מתג סגור: "הסוללה עם R1 היא מקור מתח מעשי. במצב יציב אין זרם לקבל, אז לפי KVL יש 4 מיליאמפר בנורה, והקבל טעון ל־5.8 וולט. הקבל רואה שקול תבנין עם R1 מקביל ל־R2, בערך 45 אוהם, אז הוא נטען בפחות מרבע שנייה."\n\n1:30–2:20, מתג פתוח: "הקבל מתפרק דרך R2 והנורה. KCL בצומת נותן משוואה מסדר ראשון, והפתרון הוא אקספוננט עם טאו שווה R2 כפול C, שנייה אחת. המתח לא שואף לאפס אלא ל־1.8 וולט."');
+  s.addNotes('0:50–1:30, לחצן לחוץ: "הסוללה עם R1 היא מקור מתח מעשי. במצב יציב אין זרם לקבל, אז לפי KVL יש 4 מיליאמפר בנורה, והקבל טעון ל־5.8 וולט. הקבל רואה שקול תבנין עם R1 מקביל ל־R2, בערך 45 אוהם, אז הוא נטען בפחות מרבע שנייה."\n\n1:30–2:20, לחצן משוחרר: "הקבל מתפרק דרך R2 והנורה. KCL בצומת נותן משוואה מסדר ראשון, והפתרון הוא אקספוננט עם טאו שווה R2 כפול C, שנייה אחת. המתח לא שואף לאפס אלא ל־1.8 וולט."');
 
   // ---- slide 4: prediction vs measurement ----
   pres.addSection({ title: 'הדגמה' });
@@ -205,7 +205,7 @@ async function main() {
       color: C.text1, valign: 'middle', margin: 0, ...(k === 0 ? { align: 'right', fontFace: 'Cambria' } : RTL),
       objectName: 'note ' + (k + 1) });
   });
-  s.addNotes('2:20–2:40: "הנורה נראית כבויה בערך בחצי מיליאמפר. טאו כפול לן 8 נותן 2.1 שניות."\n\n2:40–3:05, הדגמה 1: מטים, מיישרים, מודדים בסטופר. "יצא ___ שניות."\n\n3:05–3:35, הדגמה 2: מחליפים לקבל של 2200 מיקרופרד. "החיזוי היה פי 2.2, יצא ___."\n\n3:35–3:45, סיכום: "מעגל מסדר ראשון: טאו שווה RC קובע את הזמן, והוא מתאים למדידה. הסטייה הקטנה היא כי המתח על הנורה יורד קצת בזרם נמוך."');
+  s.addNotes('2:20–2:40: "הנורה נראית כבויה בערך בחצי מיליאמפר. טאו כפול לן 8 נותן 2.1 שניות."\n\n2:40–3:05, הדגמה 1: לוחצים, עוזבים, ומפעילים את הסטופר ברגע העזיבה. "יצא ___ שניות."\n\n3:05–3:35, הדגמה 2: מחליפים לקבל של 2200 מיקרופרד, לוחצים, עוזבים, מודדים. "החיזוי היה פי 2.2, יצא ___."\n\n3:35–3:45, סיכום: "מעגל מסדר ראשון: טאו שווה RC קובע את הזמן, והוא מתאים למדידה. הסטייה הקטנה היא כי המתח על הנורה יורד קצת בזרם נמוך."');
 
   await pres.writeFile({ fileName: OUT });
   const { applyTheme } = require(process.env.APPLY_THEME);

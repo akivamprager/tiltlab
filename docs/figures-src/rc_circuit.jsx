@@ -2,9 +2,9 @@ export default () => {
   const ink = 'var(--cds-text-primary)', quiet = 'var(--cds-text-secondary)', edge = 'var(--cds-chart-axis)', red = 'var(--cds-chart-status-critical)';
   const zig = (x0, y) => `M${x0} ${y}H${x0 + 4}l4 -7l8 14l8 -14l8 14l8 -14l8 14l4 -7H${x0 + 56}`;
   const sub = (id, main, s) => [<tspan data-claude-text-id={id + '-m'}>{main}</tspan>, <tspan data-claude-text-id={id + '-s'} fontSize='10.5' dy='4'>{s}</tspan>];
-  return <svg viewBox='0 0 760 290' role='img' aria-label='המעגל: סוללה, מתג הטיה, שני נגדים, קבל ונורה' fontSize='13'>
+  return <svg viewBox='0 0 760 290' role='img' aria-label='המעגל: סוללה, לחצן, שני נגדים, קבל ונורה' fontSize='13'>
     <defs><marker id='rc-arrow' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill={red}/></marker></defs>
-    <text data-claude-text-id='title' x='736' y='30' direction='rtl' textAnchor='start' fontSize='15' fontWeight='600' fill={ink}>המעגל: סוללה, מתג, שני נגדים, קבל ונורה</text>
+    <text data-claude-text-id='title' x='736' y='30' direction='rtl' textAnchor='start' fontSize='15' fontWeight='600' fill={ink}>המעגל: סוללה, לחצן, שני נגדים, קבל ונורה</text>
     <g data-claude-anchor='thevenin-box'><rect x='34' y='50' width='296' height='184' rx='8' fill='none' stroke={quiet} strokeWidth='1.25' strokeDasharray='6 5'/>
       <text data-claude-text-id='box-label' x='182' y='256' direction='rtl' textAnchor='middle' fontSize='12.5' fill={quiet}>צד הטעינה: מקור מתח מעשי (שקול תבנין)</text></g>
     <g data-claude-anchor='wires' fill='none' stroke={edge} strokeWidth='1.6'>
@@ -18,9 +18,9 @@ export default () => {
       <text x='116' y='142' fill={ink} stroke='none'>{sub('vb', 'V', 'B')}</text>
       <text data-claude-text-id='bat-val' x='116' y='162' fill={ink} stroke='none'>6 V (4×AA)</text></g>
     <g data-claude-anchor='switch'><circle cx='150' cy='90' r='3.5' fill={ink}/><circle cx='200' cy='90' r='3.5' fill={ink}/>
-      <path d='M150 90L195 70' stroke={edge} strokeWidth='1.6'/>
-      <text data-claude-text-id='sw-label' x='172' y='60' textAnchor='middle' fill={ink}>S</text>
-      <text data-claude-text-id='sw-name' x='175' y='114' direction='rtl' textAnchor='middle' fill={quiet}>מתג הטיה</text></g>
+      <path d='M144 78H206M175 78V62M165 62H185' fill='none' stroke={edge} strokeWidth='1.6'/>
+      <text data-claude-text-id='sw-label' x='212' y='70' fill={ink}>S</text>
+      <text data-claude-text-id='sw-name' x='175' y='114' direction='rtl' textAnchor='middle' fill={quiet}>לחצן</text></g>
     <g data-claude-anchor='r1'><text x='260' y='74' fill={ink}>{sub('r1', 'R', '1')}</text>
       <text data-claude-text-id='r1-val' x='268' y='114' textAnchor='middle' fill={quiet}>47 Ω</text></g>
     <g data-claude-anchor='capacitor'><path d='M382 138H418M382 148H418' stroke={edge} strokeWidth='2.2'/>
