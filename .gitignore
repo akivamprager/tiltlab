@@ -3,3 +3,4 @@ __pycache__/
 *.csv
 *_report.txt
 .DS_Store
+CLAUDE.md
