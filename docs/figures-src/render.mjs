@@ -11,7 +11,9 @@ const TOK = {
   '--cds-chart-categorical-4': '#9c36b5', '--cds-chart-categorical-5': '#0c8599', '--cds-chart-categorical-6': '#c2255c',
   '--cds-chart-status-good': '#2b8a3e', '--cds-chart-status-warning': '#e67700', '--cds-chart-status-critical': '#c92a2a',
 };
-const kebab = k => ({ className: 'class' }[k] || (k.startsWith('data') ? k.replace(/[A-Z]/g, m => '-' + m.toLowerCase()) : k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())));
+// SVG attributes that keep their camelCase (everything else, e.g. strokeWidth, becomes kebab-case)
+const CAMEL = new Set(['viewBox', 'refX', 'refY', 'markerWidth', 'markerHeight', 'preserveAspectRatio', 'gradientUnits']);
+const kebab = k => (k === 'className' ? 'class' : CAMEL.has(k) ? k : k.replace(/[A-Z]/g, m => '-' + m.toLowerCase()));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 function h(tag, props, ...kids) {
   const flat = kids.flat(Infinity).filter(k => k !== null && k !== false && k !== undefined);
@@ -24,7 +26,8 @@ const js = transformSync(code, { loader: 'jsx', jsxFactory: 'h', format: 'cjs' }
 const mod = { exports: {} };
 new Function('module', 'exports', 'h', js)(mod, mod.exports, h);
 let svg = mod.exports.default().s;
-svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, Arial, sans-serif" style="background:#fff"');
+const [, , vbW, vbH] = (svg.match(/viewBox="([^"]+)"/) || [, '0 0 760 300'])[1].split(/\s+/);
+svg = svg.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg" width="${vbW}" height="${vbH}" font-family="-apple-system, Segoe UI, Arial, sans-serif" style="background:#fff"`);
 svg = svg.replace(/var\((--cds-[a-z0-9-]+)\)/g, (m, t) => TOK[t] || m);
 fs.writeFileSync(outSvg, svg);
 fs.writeFileSync(outCode, code.replace(/\s*\n\s*/g, ' ').trim());
